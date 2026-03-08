@@ -1,0 +1,29 @@
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+
+  & section {
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    & h2 {
+      margin-top: 0;
+      color: #0b7ea4;
+      font-size: 1.25rem;
+      border-bottom: 2px solid currentColor;
+      display: inline-block;
+      padding-bottom: 0.25rem;
+    }
+  }
+}

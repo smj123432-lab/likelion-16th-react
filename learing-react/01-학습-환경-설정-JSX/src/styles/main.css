@@ -66,3 +66,15 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* CSS -> [Modern Tech.] CSS Modules */
+.header, .main, .footer {
+  background-color: #000;
+  color: #fff;
+
+  & * {
+    border: 1px solid currentColor;
+    background-color: inherit;
+    color: inherit
+  }
+}
