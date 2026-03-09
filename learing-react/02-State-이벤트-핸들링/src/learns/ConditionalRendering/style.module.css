@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profileList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+}
+
+[data-placeholder] {
+  max-width: var(--card-max-width, 320px);
+  border: 1px solid var(--card-border-color, #e5e7ec);
+  border-radius: var(--card-border-radius, 6px);
+  padding: var(--card-padding, 32px 16px);
+  background-color: var(--card-bg-color, #f3f3f3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  &:hover {
+    transform: var(--card-hover-transform, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+  }
+}

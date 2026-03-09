@@ -1,0 +1,90 @@
+:root {
+  --card-max-width: 320px;
+  --card-border-color: #e5e7eb;
+  --card-border-radius: 6px;
+  --card-padding: 16px;
+  --card-bg-color: #fff;
+  --card-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --card-hover-transform: translateY(-4px);
+  --card-hover-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  --header-gap: 8px;
+  --header-margin-bottom: 12px;
+
+  --name-font-size: 1.25rem;
+  --name-font-weight: 800;
+  --name-color: #111827;
+
+  --badge-border-radius: 4px;
+  --badge-padding: 2px 8px;
+  --badge-font-size: 0.75rem;
+  --badge-font-weight: 700;
+  --badge-line-height: 1.5;
+
+  --badge-new-border-color: #34d399;
+  --badge-new-bg-color: #d1fae5;
+  --badge-new-color: #065f46;
+
+  --badge-best-border-color: #fbbf24;
+  --badge-best-bg-color: #fef3c7;
+  --badge-best-color: #92400e;
+
+  --role-font-size: 1rem;
+  --role-line-height: 1.5;
+  --role-color: #4b5563;
+}
+
+.card {
+  max-width: var(--card-max-width);
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  background-color: var(--card-bg-color);
+  box-shadow: var(--card-box-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: var(--card-hover-transform);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.badge {
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.badgeNew {
+  border: 1px solid #34d399;
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badgeBest {
+  border: 1px solid #fbbf24;
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.role {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4b5563;
+}

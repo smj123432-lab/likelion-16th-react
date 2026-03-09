@@ -1,0 +1,11 @@
+.container {
+  --space-y: 60px;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: var(--space-y);
+  margin-bottom: var(--space-y);
+}
