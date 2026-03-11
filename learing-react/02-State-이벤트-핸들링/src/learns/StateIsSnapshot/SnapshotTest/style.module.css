@@ -2,9 +2,9 @@
 
   --bg-white: #ffffff;
   --border-light: #edf2f7;
-  --text-dark: #2d3748;
-  --primary-blue: #4a90e2;
-  --reset-gray: #a0aec0;
+  --text-dark: #075368;
+  --primary-blue: #39b0ce;
+  --reset-gray: #b3b9ba;
 
   padding: 2rem;
   border: 2px solid var(--border-light);

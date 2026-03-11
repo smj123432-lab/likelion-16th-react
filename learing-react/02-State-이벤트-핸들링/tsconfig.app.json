@@ -25,9 +25,9 @@
     "noUncheckedSideEffectImports": true,
 
     /* 절대 경로 별칭(Alias) 설정 */
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     }
 
   },

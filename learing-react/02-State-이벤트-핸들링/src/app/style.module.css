@@ -1,7 +1,17 @@
 .container {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
-  h1 {
-    color: #4285f4;
+  .imageWrapper {
+    display: flex;
+    align-items: center;
+    color: #0b7ea4;
+    gap: 4px;
+  }
+
+  .main {
+    flex: 1;
+    padding: 20px;
   }
 }
