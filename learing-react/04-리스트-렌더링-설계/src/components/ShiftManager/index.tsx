@@ -1,17 +1,17 @@
-import { useState } from "react";
-import managersData from "./data/managers.json";
-import type { Manager } from "./type/manager";
-import S from "./style.module.css";
+import { useState } from 'react'
+import managersData from './data/managers.json'
+import type { Manager } from './type/manager'
+import S from './style.module.css'
 
-const INITIAL_MANAGERS: Manager[] = managersData;
+const INITIAL_MANAGERS: Manager[] = managersData
 
 export default function ShiftManager() {
-  const [managers, setManagers] = useState(INITIAL_MANAGERS);
+  const [managers, setManagers] = useState(INITIAL_MANAGERS)
 
   const handleShuffle = () => {
-    const nextManagers = managers.toSorted(() => Math.random() - 0.5);
-    setManagers(nextManagers);
-  };
+    const nextManagers = managers.toSorted(() => Math.random() - 0.5)
+    setManagers(nextManagers)
+  }
 
   return (
     <section className={S.container}>
@@ -54,9 +54,9 @@ export default function ShiftManager() {
                 />
               </div>
             </li>
-          );
+          )
         })}
       </ul>
     </section>
-  );
+  )
 }
