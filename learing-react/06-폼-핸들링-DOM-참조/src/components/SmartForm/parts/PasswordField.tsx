@@ -1,10 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { PasswordInput } from './PasswordInput'
 import S from '../SmartForm.module.css'
+import ShowErrorOrInfoMessage from './ShowErrorOrInfoMessage'
+import { createValidator } from '../util'
 
 // 8자 이상, 대문자, 숫자, 특수문자(!@#$%^&*) 포함 정규식
 const PW_PATTERN = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/
+
+// 패스워드 유효성 검사 함수 생성
+const validatePassword = createValidator(
+  '패스워드 입력이 필요합니다.',
+  (value) => 
+    PW_PATTERN.test(value) 
+      ? '' 
+      : '8자 이상, 대문자, 숫자, 특수문자 조합이 필요합니다.'
+)
 
 interface Props {
   value: string
@@ -13,38 +23,32 @@ interface Props {
 
 export default function PasswordField({ value, onChange }: Props) {
   const fieldId = useId()
-
-  // TODO 1: '필드 방문 여부'를 관리할 상태를 만드세요.
-
-  // TODO 2: 별도의 에러 상태 없이, 현재 value와 isTouched를 조합해 에러 메시지를 반환하는 함수를 완성하세요.
-  const getErrorMessage = () => {
-    // 힌트: PW_PATTERN.test(value)를 활용해 '8자 이상, 대문자, 숫자, 특수문자 조합이 필요합니다.'를 반환하세요.
-    
-  }
-
-  // TODO 3: 위 함수를 호출하여 현재 에러 여부(showError)를 판단하는 변수를 만드세요.
-  
+  const messageId = useId()
+  const [isTouched, setIsTouched] = useState(false)
+  const [error, showError] = validatePassword(value, isTouched)
 
   return (
     <div className={S.field}>
       <label htmlFor={fieldId} className={S.label}>
-        패스워드 
+        패스워드
       </label>
 
-      {/* TODO 4: PasswordInput 컴포넌트에 필요한 Props(id, value, onBlur, isError 등)를 연결하세요. */}
       <PasswordInput
         id={fieldId}
+        describeId={messageId}
         value={value}
         onChange={onChange}
-        onBlur={() => {}}
-        isError={false}
+        onBlur={() => {
+          setIsTouched(true)
+        }}
+        isError={showError}
       />
 
-      {/* TODO 5: showError가 true일 때만 에러 메시지를 렌더링하세요. */}
-      {/* <p className={S.errorMessage} role="alert">
-        {'에러 메시지'}
-      </p> */}
-
+      <ShowErrorOrInfoMessage
+        id={messageId}
+        hint="대문자, 숫자, 특수문자(!@#$%^&*) 포함 8자 이상 입력"
+        error={error}
+      />
     </div>
   )
 }

@@ -1,72 +1,105 @@
-import { useState } from 'react'
-import S from '../RefStudy.module.css'
+/* eslint-disable react-hooks/refs */
+import { useRef, useState } from "react";
+import S from "../RefStudy.module.css";
+
+// --------------------------------------------------------
+// 실습 가이드
+// --------------------------------------------------------
+// 1. time 상태 생성 (초기값: 로케일 타임 설정) ✅
+// 2. isTimerRunning 상태 생성 (초기값: false) ✅
+// 3. timerIdRef 참조 생성 (타이머 ID 저장용: 렌더링과 무관)
+// 4. 타이머 시작 버튼 클릭 시, 실행될 startTimer 함수 로직 작성 ✅
+// 5. 타이머 정지 버튼 클릭 시, 실행될 stopTimer 함수 로직 작성 ✅
+// 6. 버튼 비활성화 제어 (접근성 고려) ✅
+// --------------------------------------------------------
+
+const getLocaleTime = () => new Date().toLocaleTimeString();
+
+type TimerId = ReturnType<typeof setInterval> | undefined;
 
 export default function TimerIdentifier() {
-  const [time, setTime] = useState(new Date().toLocaleTimeString())
-  
-  // TODO 1: 일반 변수는 렌더링될 때마다 초기화됩니다. 
-  // 렌더링 사이에도 값을 유지할 수 있도록 useRef를 사용하여 timerIdRef를 선언하세요.
-  let timerId: null | number = null
-  
-  const startTimer = () => {
-    // TODO 2: 이미 타이머가 실행 중이라면 중복 실행되지 않도록 방어 로직을 작성하세요.
+  const [time, setTime] = useState(getLocaleTime); // 현재 로케일 타임 상태
+  const [isTimerRunning, setIsTimerRunning] = useState(false); // 타이머가 실행 중인지 여부 상태
 
-    // TODO 3: setInterval의 반환값(ID)을 timerIdRef.current에 저장하세요.
-    // eslint-disable-next-line react-hooks/immutability
-    timerId = window.setInterval(() => {
-      console.log('타이머 작동 중... ID:', timerId)
-      setTime(new Date().toLocaleTimeString())
-    }, 1000)
-  }
+  // 어라? 컴포넌트가 1초마다 다시 렌더링되는데?
+  // 지역 변수다 보니.. 값이 초기화되네? 이전 값을 기억 못하네?
+  // 아 그러면 상태를 써야 하나? 기억해야 하니까? (그런데 상태를 사용하면 화면이 바뀔텐데?)
+  // 그럼 뭘 써야 하나? (기억은 하고 싶은데 화면은 안 바뀌어되는데...)
+  // let intervalId: number | undefined = undefined
+
+  const timerIdRef = useRef<TimerId>(undefined);
+
+  const startTimer = () => {
+    // [연타! 방어] 이미 타이머가 작동 중이라면? 함수 종료
+    if (isTimerRunning) return;
+
+    // 타이머 작동 중 상태로 변경 (상태 업데이트)
+    setIsTimerRunning(true);
+
+    // 클릭하자 마자, 화면의 로케일 타임도 변경 (상태 업데이트)
+    const nextTime = getLocaleTime();
+    setTime(nextTime);
+
+    // 1초 마다 외부 시스템인 웹 API(타이머)를 사용해
+    // 관리 중인 time 상태 업데이트
+    timerIdRef.current = setInterval(() => {
+      // 1초 마다, 화면의 로케일 타임 변경 (상태 업데이트)
+      setTime(getLocaleTime());
+    }, 1000);
+
+    console.log({ intervalId: timerIdRef.current });
+  };
 
   const stopTimer = () => {
-    // TODO 4: timerIdRef.current에 저장된 ID를 사용하여 타이머를 중지(clearInterval)하세요.
-    if (timerId) {
-      clearInterval(timerId)
+    // [연타! 방어] 타이머가 현재 작동되지 않았다면? 함수 종료
+    if (!isTimerRunning) return;
 
-      // TODO 5: 타이머 중지 후에는 Ref의 값을 다시 null로 초기화하세요.
-      timerId = null
-      console.log('타이머 정지!')
-    }
-  }
+    // 타이머 정지 상태로 변경 (상태 업데이트)
+    setIsTimerRunning(false);
 
-  // TODO 6: 현재 타이머가 실행 중인지 여부를 판단하는 변수를 만드세요. (Ref 값의 존재 여부 활용)
-  const isTimerRunning = false 
+    // 타이머 정지 (clearInterval 사용)
+    console.log({ intervalId: timerIdRef.current });
+    clearInterval(timerIdRef.current);
+
+    // 타이머 식별자 상태 초기화 (메모리 회수)
+    timerIdRef.current = undefined;
+  };
 
   return (
     <section className={S.section}>
       <h3 className={S.title}>내부 식별자 저장 (Timer ID)</h3>
       <div className={S.display}>
         <div>
-          상태: <strong>{isTimerRunning ? '▶️ 실행 중' : '⏹️ 정지됨'}</strong>
+          상태: <strong>{isTimerRunning ? "▶️ 실행 중" : "⏹️ 정지됨"}</strong>
         </div>
         <div>
-          {/* TODO 7: 화면에 현재 저장된 Timer ID를 표시하세요. (timerIdRef.current) */}
-          Timer ID (Ref): <strong>{timerId ?? '없음'}</strong>
+          Timer ID (Ref): <strong>{timerIdRef.current ?? "없음"}</strong>
         </div>
       </div>
       <div role="group" className={S.inputGroup}>
         <button
           type="button"
-          className={`${S.button} ${!isTimerRunning ? S.primary : ''}`}
+          className={`${S.button} ${!isTimerRunning ? S.primary : ""}`}
+          aria-disabled={isTimerRunning}
           onClick={startTimer}
-          // TODO 8: 실행 중일 때는 시작 버튼을 비활성화하세요.
         >
           타이머 시작
         </button>
         <button
           type="button"
           className={S.button}
+          aria-disabled={!isTimerRunning}
           onClick={stopTimer}
-          // TODO 9: 실행 중이 아닐 때는 정지 버튼을 비활성화하세요.
         >
           타이머 정지
         </button>
-        <time className={S.timeDisplay} aria-live="polite">{time}</time>
+        <time className={S.timeDisplay} aria-live="polite">
+          {time}
+        </time>
       </div>
       <p className={S.info}>
         로직에는 필요하지만 화면에는 그릴 필요가 없는 값을 저장합니다.
       </p>
     </section>
-  )
+  );
 }

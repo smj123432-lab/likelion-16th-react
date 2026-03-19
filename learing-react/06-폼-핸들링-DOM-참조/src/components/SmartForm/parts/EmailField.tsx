@@ -1,8 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import S from '../SmartForm.module.css'
+import ShowErrorOrInfoMessage from './ShowErrorOrInfoMessage'
+import { createValidator } from '../util'
 
+// 이메일 검사를 위한 정규식
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// 유효성 검사 함수 생성
+const validateEmail = createValidator(
+  // 필수 입력 메시지
+  '이메일 입력이 필요합니다.', 
+  // 사용자 정의 유효성 검사
+  (value) => 
+      EMAIL_PATTERN.test(value)
+        ? ''
+        : '유효한 이메일 주소를 입력해야 합니다.'
+)
 
 interface Props {
   value: string
@@ -11,17 +24,9 @@ interface Props {
 
 export default function EmailField({ value, onChange }: Props) {
   const filedId = useId()
-  // TODO 1: 에러 메시지와 '필드 방문 여부'를 관리할 상태를 만드세요.
-  
-
-  const handleBlur = () => {
-    // TODO 2: 사용자가 필드를 벗어나는 순간(Blur), 방문 여부를 true로 바꾸고 검증을 실행하세요.
-    // 힌트: EMAIL_PATTERN 정규식을 활용하세요.
-
-  }
-
-  // TODO 3: '방문했고(isTouched)' + '에러가 있을 때'만 에러를 보여주도록 변수를 설정하세요.
-  const showError = false // 이 부분을 완성하세요.
+  const messageId = useId()
+  const [isTouched, setIsTouched] = useState(false)
+  const [error, showError] = validateEmail(value, isTouched)
 
   return (
     <div className={S.field}>
@@ -32,17 +37,18 @@ export default function EmailField({ value, onChange }: Props) {
         id={filedId}
         type="email"
         placeholder="user@email.com"
-        value={value}
+        className={showError ? S.inputError : S.input}
+        aria-invalid={showError ? 'true' : 'false'}
+        aria-describedby={messageId}
         onChange={(e) => onChange(e.target.value)}
-        // TODO 4: onBlur 이벤트를 연결하고, 에러 상태에 따라 클래스와 aria 속성을 제어하세요.
-        
-        className={S.input}
+        onBlur={() => setIsTouched(true)}
+        value={value}
       />
-
-      {/* TODO 5: showError가 true일 때만 에러 메시지(p 태그)를 렌더링하세요. */}
-      {/* <p role="alert" className={S.errorMessage}>
-        {'에러 메시지'}
-      </p> */}
+      <ShowErrorOrInfoMessage
+        id={messageId}
+        hint="올바른 이메일 주소 입력"
+        error={error}
+      />
     </div>
   )
 }

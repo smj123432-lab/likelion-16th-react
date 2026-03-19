@@ -59,7 +59,7 @@
 
   .display {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-bottom: 1.25rem;
     padding: 1rem;
@@ -68,19 +68,27 @@
     border: 1px solid #f1f5f9;
 
     div {
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       color: #64748b;
+
+      dfn {
+        display: block;
+        font-style: normal;
+        font-weight: 700;
+      }
 
       strong {
         display: block;
-        font-size: 1.25rem;
+        margin-block-start: 8px;
         color: #0f172a;
+        font-size: 1.25rem;
         font-family: 'JetBrains Mono', monospace;
       }
     }
   }
 
   .button {
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -89,7 +97,6 @@
     font-size: 0.875rem;
     font-weight: 500;
     border-radius: 0.375rem;
-    cursor: pointer;
     transition: background-color 0.2s;
     border: 1px solid #e2e8f0;
     background-color: #ffffff;
@@ -164,10 +171,11 @@
 }
 
 .scrollContent {
-  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 8px;
+  height: 400px;
 }
 
 .buttonGroup {
