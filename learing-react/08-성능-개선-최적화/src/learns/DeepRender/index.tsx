@@ -1,22 +1,24 @@
-import { useEffect, useState } from 'react'
-import { formatTime } from './util/formatTime'
-import GrandFather from './parts/GrandFather'
-import S from './style.module.css'
+import { useEffect, useState } from "react";
+import { formatTime } from "./util/formatTime";
+import GrandFather from "./parts/GrandFather";
+import S from "./style.module.css";
+
+const getCurrentDate = () => new Date();
 
 export default function DeepRender() {
-  const [time, setTime] = useState(new Date())
+  const [time, setTime] = useState(getCurrentDate);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
+      setTime(getCurrentDate);
+    }, 1000);
 
     return () => {
-      clearInterval(timer)
-    }
-  }, [])
+      clearInterval(timer);
+    };
+  }, []);
 
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <div className={S.container}>
@@ -31,5 +33,5 @@ export default function DeepRender() {
         <GrandFather count={count} setCount={setCount} />
       </div>
     </div>
-  )
+  );
 }
