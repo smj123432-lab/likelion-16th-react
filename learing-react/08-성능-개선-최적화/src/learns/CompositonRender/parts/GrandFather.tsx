@@ -1,14 +1,16 @@
-import grandFatherImage from "@/assets/icons/grand-father.png";
-import S from "./style.module.css";
-import { useState } from "react";
-// 렌더링 지연 시간(ms)
-export const blockThreadTime = 0.5;
+import { useState } from 'react'
+import grandFatherImage from '@/assets/icons/grand-father.png'
+import S from './style.module.css'
 
-const iconSize = 22;
+// 렌더링 지연 시간(ms)
+export const blockThreadTime = 0.5
+
+const iconSize = 22
 
 export default function GrandFather({ children }: React.PropsWithChildren) {
-  const [count, setCount] = useState(0);
-  console.log("%cGrandFather 렌더링", "color: #349bf0");
+  const [count, setCount] = useState(0)
+
+  console.log('%cGrandFather 렌더링', 'color: #349bf0')
 
   return (
     <section className={S.container}>
@@ -29,9 +31,9 @@ export default function GrandFather({ children }: React.PropsWithChildren) {
         >
           카운트 ↑
         </button>
-        {/* <Father /> */}
+        
         {children}
       </div>
     </section>
-  );
+  )
 }

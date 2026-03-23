@@ -1,11 +1,10 @@
-import fatherImage from "@/assets/icons/father.png";
+import fatherImage from '@/assets/icons/father.png'
+import S from './style.module.css'
 
-import S from "./style.module.css";
-
-const iconSize = 20;
+const iconSize = 20
 
 export default function Father({ children }: React.PropsWithChildren) {
-  console.log("%cFather 렌더링", "color: #3a9874");
+  console.log('%cFather 렌더링', 'color: #3a9874')
 
   return (
     <div className={S.father}>
@@ -17,9 +16,7 @@ export default function Father({ children }: React.PropsWithChildren) {
         나는 Props도 State도 없지만 부모(상위) 컴포넌트가 렌더링되면 다시
         그려집니다.
       </p>
-
-      {/* 자식들을 집어넣는다 (props.children) */}
       {children}
     </div>
-  );
+  )
 }

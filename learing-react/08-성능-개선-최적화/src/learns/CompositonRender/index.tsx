@@ -1,17 +1,15 @@
-import { useState } from "react";
-import { formatTime } from "./util/formatTime";
-import GrandFather from "./parts/GrandFather";
-import S from "./style.module.css";
-import Father from "./parts/Father";
-import Child from "./parts/Child";
+import { useState } from 'react'
+import { formatTime } from './util/formatTime'
+import S from './style.module.css'
 
-const getCurrentDatetime = () => new Date();
 
-export default function CompositionRender() {
-  const [time, setTime] = useState(getCurrentDatetime);
-  const handleGetCurrentDateTime = () => setTime(getCurrentDatetime());
+const getCurrentDatetime = () => new Date()
 
-  // const [count, setCount] = useState(0)
+export default function CompositionRender({children}: React.PropsWithChildren) {
+  const [time, setTime] = useState(getCurrentDatetime)
+  const handleGetCurrentDateTime = () => setTime(getCurrentDatetime())
+
+  console.log('CompositionRender 렌더링')
 
   return (
     <div className={S.container}>
@@ -30,12 +28,8 @@ export default function CompositionRender() {
       </section>
 
       <div className={S.counterSection}>
-        <GrandFather>
-          <Father>
-            <Child />
-          </Father>
-        </GrandFather>
+        {children}
       </div>
     </div>
-  );
+  )
 }
