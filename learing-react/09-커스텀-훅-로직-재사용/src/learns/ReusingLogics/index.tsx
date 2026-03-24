@@ -1,47 +1,20 @@
-import { useState } from 'react'
-import S from './style.module.css'
+import { useInput, useToggle } from "@/hooks";
+import S from "./style.module.css";
 
 export default function ReusingLogics() {
-  
-  // 중복 로직 1: Toggle (상세 정보용)
-  const [isVisible, setIsVisible] = useState(true)
+  const [isVisible, toggleVisible] = useToggle(true);
+  const [isDarkMode, toggleDarkMode] = useToggle(false);
 
-  const toggleVisible = () => {
-    setIsVisible((prev) => !prev)
-  }
-
-  // 중복 로직 2: Toggle (다크 모드용)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-
-  const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev)
-  }
-
-  // 중복 로직 3: Input (사용자 이름용)
-  const [name, setName] = useState('')
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value)
-  }
-
-  const resetName = () => setName('')
-
-  // 중복 로직 4: Input (이메일용)
-  const [email, setEmail] = useState('')
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-  }
-
-  const resetEmail = () => setEmail('')
+  const nameInput = useInput("");
+  const emailInput = useInput("");
 
   const handleResetAll = () => {
-    resetName()
-    resetEmail()
-  }
+    nameInput.methods.reset();
+    emailInput.methods.reset();
+  };
 
   return (
-    <section className={`${S.container} ${isDarkMode ? S.dark : ''}`}>
+    <section className={`${S.container} ${isDarkMode ? S.dark : ""}`}>
       <header className={S.header}>
         <h2 className={S.title}>로직(Logic) 중복</h2>
         <p className={S.description}>
@@ -58,10 +31,10 @@ export default function ReusingLogics() {
           <input
             id="user-name"
             type="text"
-            value={name}
-            onChange={handleNameChange}
             placeholder="이름을 입력하세요"
             className={S.input}
+            {...nameInput.props}
+            // 인풋의 프롭스로 설정..?
           />
         </div>
 
@@ -72,19 +45,18 @@ export default function ReusingLogics() {
           <input
             id="user-email"
             type="email"
-            value={email}
-            onChange={handleEmailChange}
             placeholder="이메일을 입력하세요"
             className={S.input}
+            {...emailInput.props}
           />
         </div>
 
         <div className={S.resultBox}>
           <p className={S.resultText}>
-            입력된 이름: <span>{name ?? '없음'}</span>
+            입력된 이름: <span>{nameInput.props.value ?? "없음"}</span>
           </p>
           <p className={S.resultText}>
-            입력된 이메일: <span>{email ?? '없음'}</span>
+            입력된 이메일: <span>{emailInput.props.value ?? "없음"}</span>
           </p>
         </div>
 
@@ -92,17 +64,23 @@ export default function ReusingLogics() {
         <div role="group" className={S.actionGroup}>
           <button
             type="button"
-            onClick={toggleVisible}
+            onClick={() => {
+              toggleVisible();
+              emailInput.methods.select();
+            }}
             className={S.buttonOutline}
           >
-            상세 정보 {isVisible ? '숨기기' : '보기'}
+            상세 정보 {isVisible ? "숨기기" : "보기"}
           </button>
           <button
             type="button"
-            onClick={toggleDarkMode}
+            onClick={() => {
+              toggleDarkMode();
+              nameInput.methods.focus();
+            }}
             className={S.buttonOutline}
           >
-            {isDarkMode ? '라이트 모드' : '다크 모드'}
+            {isDarkMode ? "라이트 모드" : "다크 모드"}
           </button>
           <button
             type="button"
@@ -123,5 +101,5 @@ export default function ReusingLogics() {
         )}
       </div>
     </section>
-  )
+  );
 }
