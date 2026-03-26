@@ -1,116 +1,32 @@
-import { useState, useEffect } from "react";
-import S from "./BookDetailSection.module.css";
+import { useState } from "react";
 import { formatDate } from "@/utils";
-
-// API 참고
-// - https://koreandummyjson.vercel.app/docs/books
-
-export interface ResponseBookData {
-  message: string;
-  // 메세지는 문자열 값으로
-  book: Book;
-  // 북(book) 데이터는 무조건 밑에 만들어둔 'Book'이라는 설계도(규격)에 딱 맞춰서 들어와야 함
-}
-
-export interface Book {
-  id: number;
-  author: string;
-  genre: string;
-  title: string;
-  publicationDate: string;
-  totalPage: number;
-}
-
-export interface ResponseReviewData {
-  message: string;
-  reviews: Review[];
-}
-
-export interface Review {
-  id: number;
-  rating: number;
-  content: string;
-  createdAt: string;
-  userId: number;
-  bookId: number;
-}
-
-const getEndpoint = (path: string) => {
-  return `${import.meta.env.VITE_API_URL}${path}`;
-};
+import { useFetch } from "@/hooks";
+import type { ResponseBookData, ResponseReviewsData } from "../types/book";
+import { getEndpoint } from "../util/getEndpoint";
+import S from "./BookDetailSection.module.css";
 
 export default function BookDetailSection() {
   const [bookId, setBookId] = useState(1);
 
-  // 중복 로직 1: 도서 정보 가져오기
-  const [book, setBook] = useState<Book | null>(null);
-  // "이 바구니에는 나중에 Book 도면(데이터)을 담을 건데, 지금 당장은 서버에서 안 가져왔으니 텅텅 비워둘게(null)!" 라는 뜻
-  const [isBookLoading, setIsBookLoading] = useState(false);
-  // 초기상태 = 폴스
-  const [bookError, setBookError] = useState<string | null>(null);
-  // "이 바구니에는 나중에 Book 도면(데이터)을 담을 건데, 지금 당장은 서버에서 안 가져왔으니 텅텅 비워둘게(null)!" 라는 뜻
+  const bookResponse = useFetch<ResponseBookData>({
+    // ResponseBookData 타입으로 써야함
+    url: getEndpoint(`/api/books/${bookId}`),
+    // api 주소
+    dependencies: [bookId],
+    // 북의 아이디 (북의 아이디가 바뀔때마다 새로고침 -> useEffect 때문)
+  });
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
+  const book = bookResponse.data?.book; // 서버에서 가져온 도서 데이터
+  // ? -> 없으면 언디파인드 있으면 북을 꺼냄
 
-    const fetchBook = async () => {
-      setIsBookLoading(true);
-      // 트루로 바꿔 리렌더링
-      setBookError(null);
-      // 비워두고 리렌더링?
-      try {
-        const res = await fetch(getEndpoint(`/api/books/${bookId}`), {
-          signal,
-        });
-        if (!res.ok) throw new Error("도서 정보를 가져오지 못했습니다.");
-        const data = (await res.json()) as ResponseBookData;
-        setBook(data.book);
-      } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
-        setBookError(err instanceof Error ? err.message : "에러 발생");
-      } finally {
-        if (!signal.aborted) setIsBookLoading(false);
-        // 결과와 상관없이 일단 셋이즈북로딩은 폴스로 해라
-      }
-    };
+  const reviewsResponse = useFetch<ResponseReviewsData>({
+    url: getEndpoint(`/api/books/${bookId}/reviews`),
+    dependencies: [bookId],
+    // 서버에서 받아온 데이터를 리뷰데이터의 형식으로 받아서 리뷰레스폰스에 할당
+    //// 북의 아이디 (북의 아이디가 바뀔때마다 새로고침 -> useEffect 때문)
+  });
 
-    fetchBook();
-    return () => controller.abort();
-    // 변덕 부려서 다른 책 누르면, 기존에 낑낑대며 가져오던 통신 작업을 '강제 취소(중단)'시켜라!
-  }, [bookId]);
-  // 화면에 처음 뜰 때 1번 + 'bookId(책 번호)'가 다른 걸로 바뀔 때마다 다시 실행
-
-  // 중복 로직 2: 리뷰 목록 가져오기
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isReviewLoading, setIsReviewLoading] = useState(false);
-  const [reviewError, setReviewError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const fetchReviews = async () => {
-      setIsReviewLoading(true);
-      try {
-        const res = await fetch(getEndpoint(`/api/books/${bookId}/reviews`), {
-          signal,
-        });
-        if (!res.ok) throw new Error("리뷰를 가져오지 못했습니다.");
-        const data = (await res.json()) as ResponseReviewData;
-        setReviews(data.reviews);
-      } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
-        setReviewError(err instanceof Error ? err.message : "에러 발생");
-      } finally {
-        if (!signal.aborted) setIsReviewLoading(false);
-        // 상관없이 폴스로
-      }
-    };
-
-    fetchReviews();
-    return () => controller.abort();
-  }, [bookId]);
+  const reviews = reviewsResponse.data?.reviews; // 서버에서 가져온 리뷰 리스트 데이터
 
   return (
     <div className={S.container}>
@@ -145,13 +61,13 @@ export default function BookDetailSection() {
 
       <div className={S.contentGrid}>
         <article className={S.card}>
-          {isBookLoading ? (
+          {bookResponse.isLoading ? (
             <div role="status" className={S.skeleton}>
               도서 정보를 불러오는 중...
             </div>
-          ) : bookError ? (
+          ) : bookResponse.error ? (
             <div role="alert" className={S.errorBox}>
-              {bookError}
+              {bookResponse.error.message}
             </div>
           ) : (
             book && (
@@ -169,16 +85,16 @@ export default function BookDetailSection() {
         </article>
 
         <aside className={S.card}>
-          <h4 className={S.sectionLabel}>독자 리뷰 ({reviews.length})</h4>
-          {isReviewLoading ? (
+          <h4 className={S.sectionLabel}>독자 리뷰 ({reviews?.length})</h4>
+          {reviewsResponse.isLoading ? (
             <div className={S.skeleton}>리뷰 로딩 중...</div>
-          ) : reviewError ? (
+          ) : reviewsResponse.error ? (
             <div role="alert" className={S.errorBox}>
-              {reviewError}
+              {reviewsResponse.error.message}
             </div>
           ) : (
             <ul className={S.reviewList}>
-              {reviews.length > 0 ? (
+              {reviews ? (
                 reviews.map((review) => (
                   <li key={review.id} className={S.reviewItem}>
                     <div className={S.reviewHeader}>
